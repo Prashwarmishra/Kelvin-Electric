@@ -4,6 +4,11 @@ const port = 8000;
 
 const app = express();
 
+//set up middlewares
+app.use(express.urlencoded({extended: true}));
+
+//set up database
+const db = require('./config/mongoose');
 
 //set up routes
 app.use('/', require('./routes'));
