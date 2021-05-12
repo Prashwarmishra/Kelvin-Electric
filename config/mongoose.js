@@ -2,7 +2,11 @@
 const mongoose = require('mongoose');
 
 //define database path
-mongoose.connect('mongodb://localhost/kelvin_electric_development', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost/kelvin_electric_development', { 
+    useNewUrlParser: true, 
+    useUnifiedTopology: true, 
+    useCreateIndex: true 
+});
 
 //set up connection
 const db = mongoose.connection;
