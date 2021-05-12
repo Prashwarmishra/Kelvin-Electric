@@ -1,8 +1,9 @@
 //require mongoose
 const mongoose = require('mongoose');
+const env = require('./environment');
 
 //define database path
-mongoose.connect('mongodb://localhost/kelvin_electric_development', { 
+mongoose.connect(`mongodb://localhost/${env.db_path}`, { 
     useNewUrlParser: true, 
     useUnifiedTopology: true, 
     useCreateIndex: true 
