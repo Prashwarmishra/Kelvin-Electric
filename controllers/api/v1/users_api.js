@@ -50,3 +50,44 @@ module.exports.signUp = async function(req, res){
         });
     }
 }
+
+//controller to verify the sent mail and create user account
+module.exports.verifyAccount = async function(req, res){
+    try {
+        //find the accessToken in the database
+        let accessToken = await AccessToken.findOne({accessToken: req.params.id});
+
+        //if accessToken found and is valid
+        if(accessToken && accessToken.isValid){
+            
+            //create user 
+            await User.create({
+                name: accessToken.name,
+                email: accessToken.email,
+                phone: accessToken.phone,
+                password: accessToken.password,
+            });
+
+            //invalidate the accessToken to restrict further use
+            accessToken.isValid = false;
+            accessToken.save();
+
+            return res.status(200).json({
+                message: 'User account created successfully, please login to continue',
+            });
+        }
+
+        //if accessToken is not found or invalid return 404
+        else{
+            return res.status(404).json({
+                message: 'File not found',
+            }); 
+        }
+    } catch (error) {
+        //in case of error console the error
+        console.log('Error in user account verification: ', error);
+        return res.status(500).json({
+            message: 'Internal Server Error',
+        });
+    }
+}
