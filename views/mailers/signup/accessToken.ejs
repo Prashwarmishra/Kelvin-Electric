@@ -6,9 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <a href="http://localhost:8000/user/verify-email/${data.accessToken}">
-        Click here to verify your Kelvin Electric account.
+
+    <p>Hey <%= accessToken.name %>,</p>
+
+    <br>
+    Please click on the link below to activate your Kelvin Electric account. 
+    <br>
+    Ignore if this was not requested by you.
+    <br><br>
+    <a href="http://localhost:8000/user/verify-email/<%= accessToken.accessToken %>">
+        Click here to activate your account.
     </a>
+
+    <br><br>
+    
+    Regards,
+    Kelvin Electric
 </body>
 </html>
 

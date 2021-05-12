@@ -6,13 +6,27 @@ const accessTokenSchema = new mongoose.Schema({
         required: true,
     },
     isValid: {
-        type: boolean,
+        type: Boolean,
         required: true
     },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-    }
+    name: {
+        type: String,
+        required: true, 
+     },
+    email: {
+         type: String,
+         required: true,
+         unique: true,
+     },
+    phone: {
+         type: Number,
+         required: true,
+         unique: true,
+     },
+    password: {
+         type: String,
+         required: true,
+     }
 },  
     {
         timestamps: true,

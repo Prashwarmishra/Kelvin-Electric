@@ -1,22 +1,20 @@
 const nodemailer = require('../config/nodemailer');
 
-const signUpAccessToken = function(data){
+exports.signUpAccessToken = function(accessToken){
 
-    let htmlString = nodemailer.renderTemplate(data, '/signup/accessToken.ejs');
+    let htmlString = nodemailer.renderTemplate({accessToken: accessToken}, '/signup/accessToken.ejs');
 
     nodemailer.transporter.sendMail({
         from: 'product.kelvinelectric@gmail.com',
-        to: data.user.email,
+        to: accessToken.email,
         subject: 'Account verification link',
         html: htmlString,
     }, function(err, info){
         if(err){
-            console.log('Error in sending user-verification mail');
+            console.log('Error in sending user-verification mail', err);
             return;
         }
         console.log('E-mail sent', info);
         return;
     });
 }
-
-module.exports = signUpAccessToken;
