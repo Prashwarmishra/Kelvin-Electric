@@ -3,6 +3,7 @@ const AccessToken = require('../../../models/access_token');
 const crypto = require('crypto');
 const signUpEmailMailer = require('../../../mailers/sign_up_email_mailer');
 
+//create a controller for sign up
 module.exports.signUp = async function(req, res){
 
     try {

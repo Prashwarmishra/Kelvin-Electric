@@ -11,7 +11,8 @@ const development = {
             user: 'product.kelvinelectric@gmail.com',
             pass: 'mern@kelvin',
         }
-    }
+    },
+    jwt_secret: 'JdvlUriHObDQpOBW8QYsB1WMV51unUBZ',
 }
 
 const production = {
