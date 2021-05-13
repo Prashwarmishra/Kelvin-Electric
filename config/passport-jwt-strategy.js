@@ -10,6 +10,7 @@ const opts = {
 }
 
 passport.use(new JwtStrategy(opts, function(JwtPayload, done){
+    
     User.findById(JwtPayload._id, function(err, user){
         if(err){
             console.log('Error in JWT authentication: ', err);

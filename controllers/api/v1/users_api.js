@@ -2,6 +2,8 @@ const User = require('../../../models/user');
 const AccessToken = require('../../../models/access_token');
 const crypto = require('crypto');
 const signUpEmailMailer = require('../../../mailers/sign_up_email_mailer');
+const jwt = require('jsonwebtoken');
+const env = require('../../../config/environment');
 
 //create a controller for sign up
 module.exports.signUp = async function(req, res){
@@ -87,6 +89,37 @@ module.exports.verifyAccount = async function(req, res){
     } catch (error) {
         //in case of error console the error
         console.log('Error in user account verification: ', error);
+        return res.status(500).json({
+            message: 'Internal Server Error',
+        });
+    }
+}
+
+//create a controller for signing in users locallly
+module.exports.signIn = async function(req, res){
+    try {
+        //find the user in the database
+        let user = await User.findOne({email: req.body.email});
+
+        //handle user not found and password mismatch
+        if(!user || user.password != req.body.password){
+            return res.status(403).json({
+                message: 'Invalid user email/password',
+            });
+        }
+        //if user found, generate the jwt
+        else{
+            return res.status(200).json({
+                message: 'Sign-in successful, here is your json web token',
+                data: {
+                    token: jwt.sign(user.toJSON(), env.jwt_secret, {expiresIn: '1000000'}),
+                }
+            });
+        }
+
+    } catch (error) {
+        //in case of error console the error
+        console.log('Error in user sign-in: ', error);
         return res.status(500).json({
             message: 'Internal Server Error',
         });

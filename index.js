@@ -1,6 +1,8 @@
 //initialize the variables
 const express = require('express');
 const port = 8000;
+const passport = require('passport');
+const passportJwt = require('./config/passport-jwt-strategy');
 
 const app = express();
 
