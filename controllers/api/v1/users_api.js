@@ -125,3 +125,9 @@ module.exports.signIn = async function(req, res){
         });
     }
 }
+
+module.exports.googleSignIn = function(req, res){
+    return res.status(200).json({
+        message: 'Google sign-in successful',
+    });
+}

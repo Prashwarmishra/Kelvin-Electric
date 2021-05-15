@@ -13,6 +13,10 @@ const development = {
         }
     },
     jwt_secret: 'JdvlUriHObDQpOBW8QYsB1WMV51unUBZ',
+    google_client_id: '438150736898-8c9eb09t8f55u94sadskoidibnsds7nb.apps.googleusercontent.com',
+    google_client_secret: 'wxM8ToCrdVcIlLZXd7UiZMVH',
+    google_callback_url: 'http://localhost:8000/api/v1/user/auth/google/callback',
+    session_secret: '5ZL0AZtbj9lwqKWM1ry4jZwanRWrcJNg',
 }
 
 const production = {
