@@ -112,7 +112,8 @@ module.exports.signIn = async function(req, res){
             return res.status(200).json({
                 message: 'Sign-in successful, here is your json web token',
                 data: {
-                    token: jwt.sign(user.toJSON(), env.jwt_secret, {expiresIn: '1000000'}),
+                    //create a jwt token for 24 hours
+                    token: jwt.sign(user.toJSON(), env.jwt_secret, {expiresIn: '86400000'}),
                 }
             });
         }
@@ -127,7 +128,11 @@ module.exports.signIn = async function(req, res){
 }
 
 module.exports.googleSignIn = function(req, res){
+    
     return res.status(200).json({
-        message: 'Google sign-in successful',
+        message: 'Google sign-in successful, here is your token',
+        data: {
+            data: jwt.sign(req.user.toJSON(), env.jwt_secret, {expiresIn: '86400000'}),
+        }
     });
 }
