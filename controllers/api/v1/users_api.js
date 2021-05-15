@@ -127,12 +127,51 @@ module.exports.signIn = async function(req, res){
     }
 }
 
+
+//controller for google sign in/up
 module.exports.googleSignIn = function(req, res){
     
+    //retrive the user data from session cookie, create a json web token and send it back
     return res.status(200).json({
         message: 'Google sign-in successful, here is your token',
         data: {
             data: jwt.sign(req.user.toJSON(), env.jwt_secret, {expiresIn: '86400000'}),
         }
     });
+}
+
+//controller for signing out a user
+module.exports.signOut = function(req, res){
+
+    req.logout();
+    return res.status(200).json({
+        message: 'logged out successfully!',
+    })
+}
+
+//controller for updating user info
+module.exports.update = async function(req, res){
+    try {
+        let user = await User.findById(req.user.id);
+        if(user){
+            user.name = req.body.name;
+            user.password = req.body.password;
+            if(req.body.phone){
+                user.phone = req.body.phone;
+            }
+            user.save();
+            return res.status(200).json({
+                message: 'profile updated successfully',
+            });
+        }else{
+            return res.status(401).json({
+                message: 'Unauthorized',
+            });
+        }
+    } catch (error) {
+        console.log('Error in updating user profile: ', error);
+        return res.status(500).json({
+            message: 'internal server error',
+        });
+    }
 }
