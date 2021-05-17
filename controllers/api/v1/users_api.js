@@ -43,7 +43,7 @@ module.exports.signUp = async function(req, res){
 
             //return a success message
             return res.status(200).json({
-                message: 'User verification link sent, please check your email',
+                message: 'user verification link sent, please check your email',
             });
         }
     } catch (error) {
@@ -51,7 +51,7 @@ module.exports.signUp = async function(req, res){
         //in case of error console the error
         console.log('Error in creating user account: ', error);
         return res.status(500).json({
-            message: 'Internal Server Error',
+            message: 'internal Server Error',
         });
     }
 }
@@ -78,21 +78,21 @@ module.exports.verifyAccount = async function(req, res){
             accessToken.save();
 
             return res.status(200).json({
-                message: 'User account created successfully, please login to continue',
+                message: 'user account created successfully, please login to continue',
             });
         }
 
         //if accessToken is not found or invalid return 404
         else{
             return res.status(404).json({
-                message: 'File not found',
+                message: 'file not found',
             }); 
         }
     } catch (error) {
         //in case of error console the error
-        console.log('Error in user account verification: ', error);
+        console.log('error in user account verification: ', error);
         return res.status(500).json({
-            message: 'Internal Server Error',
+            message: 'internal Server Error',
         });
     }
 }
@@ -106,13 +106,13 @@ module.exports.signIn = async function(req, res){
         //handle user not found and password mismatch
         if(!user || user.password != req.body.password){
             return res.status(403).json({
-                message: 'Invalid user email/password',
+                message: 'invalid user email/password',
             });
         }
         //if user found, generate the jwt
         else{
             return res.status(200).json({
-                message: 'Sign-in successful, here is your json web token',
+                message: 'sign-in successful, here is your json web token',
                 data: {
                     //create a jwt token for 24 hours
                     token: jwt.sign(user.toJSON(), env.jwt_secret, {expiresIn: '86400000'}),
@@ -122,9 +122,9 @@ module.exports.signIn = async function(req, res){
 
     } catch (error) {
         //in case of error console the error
-        console.log('Error in user sign-in: ', error);
+        console.log('error in user sign-in: ', error);
         return res.status(500).json({
-            message: 'Internal Server Error',
+            message: 'internal Server Error',
         });
     }
 }
@@ -135,7 +135,7 @@ module.exports.googleSignIn = function(req, res){
     
     //retrive the user data from session cookie, create a json web token and send it back
     return res.status(200).json({
-        message: 'Google sign-in successful, here is your token',
+        message: 'google sign-in successful, here is your token',
         data: {
             data: jwt.sign(req.user.toJSON(), env.jwt_secret, {expiresIn: '86400000'}),
         }
@@ -154,8 +154,14 @@ module.exports.signOut = function(req, res){
 //controller for updating user info
 module.exports.update = async function(req, res){
     try {
+
+        //locate the user in the database
         let user = await User.findById(req.user.id);
-        if(user){
+
+        //check if the user is authorised
+        if(user && user.id == req.params.id){
+
+            //update user profile
             user.name = req.body.name;
             user.password = req.body.password;
             if(req.body.phone){
@@ -166,8 +172,10 @@ module.exports.update = async function(req, res){
                 message: 'profile updated successfully',
             });
         }else{
+
+            //handle unauthorized requests
             return res.status(401).json({
-                message: 'Unauthorized',
+                message: 'unauthorized',
             });
         }
     } catch (error) {
@@ -214,4 +222,53 @@ module.exports.forgetPassword = async function(req, res){
             message: 'internal server error',
         });
     }
+}
+
+
+//controller for resetting user password
+module.exports.resetPassword = async function(req, res){
+    try {
+
+        //handle password mismatch
+        if(req.body.password != req.body.confirm_password){
+            return res.status(412).json({
+                message: 'password and confirm password does not match, try again.',
+            });
+        }
+
+        //locate the token in database
+        let passwordResetToken = await PasswordResetToken.findOne({token: req.params.id});
+        
+        //if token found and is valid
+        if(passwordResetToken && passwordResetToken.isValid){
+
+            //locate the user from the token's user id
+            let user = await User.findById(passwordResetToken.user);
+
+            //change user password
+            user.password = req.body.password;
+            user.save();
+
+            //invalidate the token to prevent further use
+            passwordResetToken.isValid = false;
+            passwordResetToken.save();
+            
+            return res.status(200).json({
+                message: 'profile password changed, login to continue',
+            });
+        }
+        //handle invalid token
+        else{
+            return res.status(401).json({
+                message: 'Invalid token',
+            })
+        }
+    } catch (error) {
+
+        //in case of error console the error
+        console.log('Error in reseting user password: ', error);
+        return res.status(500).json({
+            message: 'internal server error',
+        });
+    }    
 }

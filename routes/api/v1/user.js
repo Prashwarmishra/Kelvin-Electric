@@ -22,11 +22,13 @@ router.get('/auth/google/callback', passport.authenticate('google', {failureRedi
 //route for user sign out
 router.get('/sign-out', passport.authenticate('jwt', {session: 'false'}), usersApi.signOut);
 
-//router for updating user profile
-router.post('/update-profile', passport.authenticate('jwt', {session: 'false'}), usersApi.update);
+//route for updating user profile
+router.post('/update-profile/:id', passport.authenticate('jwt', {session: 'false'}), usersApi.update);
 
-//router for resetting user passwords
+//route for forgot password
 router.post('/forgot-password', usersApi.forgetPassword);
 
+//route for resetting user password
+router.post('/reset-password/:id', usersApi.resetPassword);
 
 module.exports = router;
