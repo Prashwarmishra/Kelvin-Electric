@@ -25,5 +25,8 @@ router.get('/sign-out', passport.authenticate('jwt', {session: 'false'}), usersA
 //router for updating user profile
 router.post('/update-profile', passport.authenticate('jwt', {session: 'false'}), usersApi.update);
 
+//router for resetting user passwords
+router.post('/forgot-password', usersApi.forgetPassword);
+
 
 module.exports = router;

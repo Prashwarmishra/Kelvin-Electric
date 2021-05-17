@@ -1,8 +1,8 @@
 const nodemailer = require('../config/nodemailer');
 
 
-exports.passwordResetToken = function(data){
-    let token = data.token;
+exports.passwordResetToken = function(token){
+
     let htmlString = nodemailer.renderTemplate({token: token}, '/password_reset/passwordResetToken.ejs');
 
     nodemailer.transporter.sendMail({
@@ -16,5 +16,6 @@ exports.passwordResetToken = function(data){
             return;
         }
         console.log(info);
+        return;
     })
 }

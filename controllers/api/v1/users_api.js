@@ -4,6 +4,8 @@ const crypto = require('crypto');
 const signUpEmailMailer = require('../../../mailers/sign_up_email_mailer');
 const jwt = require('jsonwebtoken');
 const env = require('../../../config/environment');
+const PasswordResetToken = require('../../../models/password_reset_token');
+const PasswordResetTokenMailer = require('../../../mailers/password_reset_email_mailer');
 
 //create a controller for sign up
 module.exports.signUp = async function(req, res){
@@ -170,6 +172,44 @@ module.exports.update = async function(req, res){
         }
     } catch (error) {
         console.log('Error in updating user profile: ', error);
+        return res.status(500).json({
+            message: 'internal server error',
+        });
+    }
+}
+
+//controller for forget password
+module.exports.forgetPassword = async function(req, res){
+    try {
+
+        //locate the user in database
+        let user = await User.findOne({email: req.body.email});
+        if(user){
+
+            //if user found, create a password reset token
+            let passwordResetToken = await PasswordResetToken.create({
+                token: crypto.randomBytes(20).toString('hex'),
+                user: user,
+                isValid: true,
+            });
+
+            //send the created token to user's email
+            PasswordResetTokenMailer.passwordResetToken(passwordResetToken);
+
+            return res.status(200).json({
+                message: 'password reset token sent to user email',
+            });
+        }
+        //handle case when user not found in db
+        else{
+            return res.status(404).json({
+                message: 'no username with the provided email exists in the database',
+            });
+        }
+    } catch (error) {
+
+        //in case of error console the error
+        console.log('Error in creating password-reset-token: ', error);
         return res.status(500).json({
             message: 'internal server error',
         });
