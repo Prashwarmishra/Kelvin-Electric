@@ -11,4 +11,7 @@ router.get('/locate-dealerships', productApi.locateDealerships);
 //router for booking a testride
 router.post('/testride', passport.authenticate('jwt', {session: 'false'}), productApi.testride);
 
+//router for cancelling a testride
+router.get('/testride-cancellation/:id', productApi.cancelTestride);
+
 module.exports = router;

@@ -74,3 +74,51 @@ module.exports.testride = async function(req, res){
         });
     }
 }
+
+//controller for cancelling a testride
+module.exports.cancelTestride = async function (req, res){
+    try {
+        
+        //fetch the testride details from database
+        let testride = await Testride.findById(req.params.id);
+
+        //fetch the user
+        let user = await User.findById(testride.user);
+        
+        //if testride details and user found
+        if(testride && user){
+
+            //check if the testride is valid
+            if(testride.isValid){
+
+                //if valid, cancel the booking
+                testride.isValid = false;
+                testride.save();
+                return res.status(200).json({
+                    message: 'booking cancelled',
+                });
+            }else{
+
+                //handle bookings already cancelled
+                return res.status(412).json({
+                    message: 'booking already cancelled by the user'
+                })
+            }
+        }
+        //handle unauthorized requests
+        else{
+            console.log('******testride', testride);
+            console.log('user*****', user);
+            return res.status(401).json({
+                message: 'Unauthorized Access',
+            });
+        }
+    } catch (error) {
+
+        //console error if any
+        console.log('Error in booking testride: ',error);
+        return res.status(500).json({
+            message: 'internal server error',
+        });
+    }
+}

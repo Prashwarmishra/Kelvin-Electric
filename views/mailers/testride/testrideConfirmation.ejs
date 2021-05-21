@@ -11,20 +11,23 @@
 
     Your appointment for an exhilarating test drive of our newest Kelvin 150x scooter is confirmed.
     You'll find the details of your booking below:
-    <br>
-    <br>
+
+    <br><br>
+
     Dealership location: <b><%= testride.dealershipName %></b>
     <br>
     Date: <b><%= testride.date %></b>
     <br>
-    Time: <b><%= testride.time IST %></b>
-    <br>
-    <br>
+    Time: <b><%= testride.time %> IST</b>
+
+    <br><br>
+
     Change of plans? Cancel your booking by clicking the link below:
     <br>
-    <a href="/">Cancel your test ride booking</a>
-    <br>
-    <br>
+    <a href="http://localhost:8000/api/v1/product/testride-cancellation/<%= testride.id %>">Cancel your test ride booking</a>
+    
+    <br><br>
+
     Regards,<br>
     Kelvin Electric  
 </body>
