@@ -1,6 +1,7 @@
 const Dealership = require('../../../models/dealership');
 const User = require('../../../models/user');
 const Testride = require('../../../models/testride');
+const testrideConfirmationMailer = require('../../../mailers/testride_confirmation_mailer');
 
 //controller for locating dealerships
 module.exports.locateDealerships = async function(req, res){
@@ -26,7 +27,7 @@ module.exports.locateDealerships = async function(req, res){
     }
 }
 
-//constroller for scheduling a testride
+//controller for scheduling a testride
 module.exports.testride = async function(req, res){
     try {
         
@@ -45,7 +46,10 @@ module.exports.testride = async function(req, res){
                 date: req.body.date,
                 time: req.body.time,
                 user: user,
+                isValid: true,
             });
+
+            testrideConfirmationMailer.testrideEmail(testride);
 
             return res.status(200).json({
                 message: 'testride scheduled',

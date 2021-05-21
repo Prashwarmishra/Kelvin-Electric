@@ -6,7 +6,7 @@ const testrideSchema = new mongoose.Schema({
         required: true,
     },
     date: {
-        type: Date,
+        type: String,
         required: true,
     },
     time: {
@@ -16,6 +16,10 @@ const testrideSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+    },
+    isValid: {
+        type: Boolean,
+        required: true,
     }
 },  {
         timestamps: true,
