@@ -14,13 +14,13 @@ router.post('/testride', passport.authenticate('jwt', {session: 'false'}), produ
 //router for cancelling a testride
 router.get('/testride-cancellation/:id', passport.authenticate('jwt', {session: 'false'}), productApi.cancelTestride);
 
-//router for preordering the product
-router.post('/preorder', passport.authenticate('jwt', {session: 'false'}), productApi.preorder);
-
 //router for collecting payments
 router.post('/payment', productApi.payment);
 
 //router for verifying payments
 router.post('/payment-verification', productApi.paymentVerification);
+
+//router for preordering the product
+router.post('/preorder', passport.authenticate('jwt', {session: 'false'}), productApi.preorder);
 
 module.exports = router;

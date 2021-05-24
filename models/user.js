@@ -19,10 +19,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    orders: [
+    preorders: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Payment',
+            ref: 'Preorder',
         }
     ]
 }, 

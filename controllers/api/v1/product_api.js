@@ -7,6 +7,7 @@ const testrideConfirmationMailer = require('../../../mailers/testride_confirmati
 const Razorpay = require('razorpay');
 const env = require('../../../config/environment');
 const crypto = require('crypto');
+const orderConfirmationMailer = require('../../../mailers/order_confirmation_mailer');
 
 //controller for locating dealerships
 module.exports.locateDealerships = async function(req, res){
@@ -128,54 +129,6 @@ module.exports.cancelTestride = async function (req, res){
     }
 }
 
-//controller for handling preorders
-module.exports.preorder = async function(req, res){
-    try {
-        //locate the user in database
-        let user = await User.findById(req.user.id);
-               
-        //if user logged found
-        if(user){
-
-            //create preorder 
-            let preorder = await Preorder.create({
-                model: req.body.model,
-                color: req.body.color,
-                shippingState: req.body.shippingState,
-                shippingCity: req.body.shippingCity,
-                shippingPincode: req.body.shippingPincode,
-                shippingDealershipName: req.body.shippingDealershipName,
-                user: user,
-                billingAddress: req.body.billingAddress,
-                billingLandmark: req.body.billingLandmark,
-                billingPincode: req.body.billingPincode,
-                billingCity: req.body.billingCity
-            });
-
-            return res.status(200).json({
-               message: 'order created, complete the payment',
-               data: {
-                   preorder: preorder,
-               } 
-            });
-        }
-
-        //handle user not 
-        else{
-            return res.status(401).json({
-                message: 'Unauthorized Access',
-            });
-        }
-    } catch (error) {
-
-        //console error if any
-        console.log('Error in handling preorders: ', error);
-        return res.status(500).json({
-            message: 'internal server error',
-        });
-    }
-}
-
 //create an instance of razorpay payment
 const razorpayInstance = new Razorpay({
     key_id: env.razorpay_key,
@@ -222,9 +175,8 @@ module.exports.paymentVerification = async function(req, res){
         //status ok sent so that razorpay does not drop the webhook
         res.json({status: 'ok'});
         const secret = env.razorpay_webhook_secret;
-
-
-        const user = await User.findById('60ab5e9b072a388a5c4bd2c9');
+        
+        const user = await User.findById('60abed79726b55871cb5bcd9');
         console.log('<------replace the id above with req.user.id ----->');
 
         //create a hash of the secret
@@ -238,21 +190,20 @@ module.exports.paymentVerification = async function(req, res){
             //create record for the payment made
             const data = req.body.payload.payment.entity;
             
-            let payment = await Payment.create({
+            const payment = await Payment.create({
                 user: user, //to be used after complete integration
                 email: data.email,
                 contact: data.contact,
                 orderId: data.order_id,
+                paymentId: data.id,
                 amount: data.amount,
                 amountRefunded: data.amount_refunded,
                 method: data.method,
                 fee: data.fee,
                 tax: data.tax
             });
-
-            //push the payment id to user schema
-            user.orders.push(payment);
-            user.save();
+            
+            console.log(payment);
 
             console.log('Payment successful');
         }
@@ -263,5 +214,64 @@ module.exports.paymentVerification = async function(req, res){
     } catch (error) {
         //console error if any
         console.log('Error in verifying payments: ', error);
+    }
+}
+
+//controller for handling preorders
+module.exports.preorder = async function(req, res){
+    try {
+        //locate the user in database
+        let user = await User.findById(req.user.id);
+               
+        //if user logged found
+        if(user){
+            let payment = await Payment.findOne({orderId: req.body.orderId, paymentId: req.body.paymentId});
+            console.log('payment details --->>>>', payment);
+            
+            //create preorder 
+            let preorder = await Preorder.create({
+                user: user,
+                model: req.body.model,
+                color: req.body.color,
+                shippingState: req.body.shippingState,
+                shippingCity: req.body.shippingCity,
+                shippingPincode: req.body.shippingPincode,
+                shippingDealershipName: req.body.shippingDealershipName,
+                user: user,
+                billingAddress: req.body.billingAddress,
+                billingLandmark: req.body.billingLandmark,
+                billingPincode: req.body.billingPincode,
+                billingCity: req.body.billingCity, 
+                payment: payment
+            });
+
+            
+            user.preorders.push(preorder);
+            user.save();
+            console.log('Time before push, hiieeeeeeeeeeeeeeeeee---->');
+            orderConfirmationMailer.orderConfirmationEmail(preorder);
+            console.log('Time to push, byeeeeeeeeeeeeeeeeee---->');
+
+            return res.status(200).json({
+               message: 'order created, complete the payment',
+               data: {
+                   preorder: preorder,
+               } 
+            });
+        }
+
+        //handle user not 
+        else{
+            return res.status(401).json({
+                message: 'Unauthorized Access',
+            });
+        }
+    } catch (error) {
+
+        //console error if any
+        console.log('Error in handling preorders: ', error);
+        return res.status(500).json({
+            message: 'internal server error',
+        });
     }
 }

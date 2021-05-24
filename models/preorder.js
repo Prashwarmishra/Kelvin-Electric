@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const preorderSchema = new mongoose.Schema({
+    user: {
+        type: String,
+        required: true,
+    },
     model: {
         type: String,
         required: true,
@@ -44,6 +48,10 @@ const preorderSchema = new mongoose.Schema({
     billingCity: {
         type: String,
         required: true,
+    },
+    payment: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Payment',        
     }
 },  {
         timestamps: true,

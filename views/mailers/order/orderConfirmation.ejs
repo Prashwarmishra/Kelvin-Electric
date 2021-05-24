@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed</title>
+</head>
+<body>
+    <p>Hey <%= preorder.user.name %>,</p>
+
+    Congratulations on your preorder of Kelvin 250x scooter. We hope you are as excited 
+    about this big news as we are!
+    Please find the details of your payment below:
+
+    <br><br>
+
+    Model: <b> <%= preorder.model %> </b>
+    <br>
+    Color: <b> <%= preorder.color %> </b>
+    <br>
+    Order Id: <b><%= preorder.payment.orderId %></b>
+    <br>
+    Amount: <b> Rs. <%= parseInt(preorder.payment.amount)/100 %></b>
+    <br>
+    Mode of Payment: <b><%= preorder.payment.method %></b>
+
+    <br><br>
+
+    You would get a call from your Dealership very soon regarding the delivery estimates.
+
+    <br>
+    Thank you for choosing Kelvin Electric!
+    <br><br>
+
+    Regards,<br>
+    Kelvin Electric  
+
+</body>
+</html>
