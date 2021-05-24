@@ -3,6 +3,9 @@ const User = require('../../../models/user');
 const Testride = require('../../../models/testride');
 const Preorder = require('../../../models/preorder');
 const testrideConfirmationMailer = require('../../../mailers/testride_confirmation_mailer');
+const Razorpay = require('razorpay');
+const env = require('../../../config/environment');
+const crypto = require('crypto');
 
 //controller for locating dealerships
 module.exports.locateDealerships = async function(req, res){
@@ -170,4 +173,48 @@ module.exports.preorder = async function(req, res){
             message: 'internal server error',
         });
     }
+}
+
+//create an instance of razorpay payment
+const razorpayInstance = new Razorpay({
+    key_id: env.razorpay_key,
+    key_secret: env.razorpay_secret,
+});
+
+//controller for generating order details
+module.exports.payment = async function(req, res){
+    try {
+
+        //define order parameters
+        const amount = 2500;
+        const currency = 'INR';
+        const receipt = crypto.randomBytes(10).toString('hex');
+        const payment_capture = 1;
+
+        const options = {
+            amount: (amount*100),
+            currency,
+            receipt,
+            payment_capture,
+        }
+
+        //instantiate the razorpay order
+        const razorpayOrder = await razorpayInstance.orders.create(options);
+
+        console.log(razorpayOrder);    
+    
+        return res.status(200).json({
+            message: 'payment order created',
+            data: razorpayOrder,
+        });
+
+    } catch (error) {
+        //console error if any
+        console.log('Error in generating order details: ', error);
+        return res.status(500).json({
+            message: 'internal server error',
+        });
+    }
+    razorpayInstance.orders.create({amount, currency, receipt, payment_capture, notes})
+
 }

@@ -17,6 +17,8 @@ const development = {
     google_client_secret: 'EZkyyvxTTzfkoQ-HS4E3aycn',
     google_callback_url: 'http://localhost:8000/api/v1/user/auth/google/callback',
     session_secret: '5ZL0AZtbj9lwqKWM1ry4jZwanRWrcJNg',
+    razorpay_key: 'rzp_test_83c16uaIQBUCGK',
+    razorpay_secret: 'TRAQJbbPmTZJL9SLvOd5qQFH'
 }
 
 const production = {

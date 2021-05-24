@@ -17,4 +17,7 @@ router.get('/testride-cancellation/:id', passport.authenticate('jwt', {session: 
 //router for preordering the product
 router.post('/preorder', passport.authenticate('jwt', {session: 'false'}), productApi.preorder);
 
+//router for collecting payments
+router.post('/payment', productApi.payment);
+
 module.exports = router;
