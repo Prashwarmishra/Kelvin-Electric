@@ -20,5 +20,7 @@ router.post('/preorder', passport.authenticate('jwt', {session: 'false'}), produ
 //router for collecting payments
 router.post('/payment', productApi.payment);
 
+//router for verifying payments
+router.post('/payment-verification', productApi.paymentVerification);
 
 module.exports = router;

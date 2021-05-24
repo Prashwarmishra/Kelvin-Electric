@@ -2,6 +2,7 @@ const Dealership = require('../../../models/dealership');
 const User = require('../../../models/user');
 const Testride = require('../../../models/testride');
 const Preorder = require('../../../models/preorder');
+const Payment = require('../../../models/payment');
 const testrideConfirmationMailer = require('../../../mailers/testride_confirmation_mailer');
 const Razorpay = require('razorpay');
 const env = require('../../../config/environment');
@@ -215,3 +216,52 @@ module.exports.payment = async function(req, res){
     }
 }
 
+//controller for verifying payments
+module.exports.paymentVerification = async function(req, res){
+    try {
+        //status ok sent so that razorpay does not drop the webhook
+        res.json({status: 'ok'});
+        const secret = env.razorpay_webhook_secret;
+
+
+        const user = await User.findById('60ab5e9b072a388a5c4bd2c9');
+        console.log('<------replace the id above with req.user.id ----->');
+
+        //create a hash of the secret
+        const shasum = crypto.createHmac('sha256', secret)
+        shasum.update(JSON.stringify(req.body))
+        const digest = shasum.digest('hex')
+
+        //if secret matches razorpay-signature, payment is successful
+        if(digest === req.headers['x-razorpay-signature']){
+
+            //create record for the payment made
+            const data = req.body.payload.payment.entity;
+            
+            let payment = await Payment.create({
+                user: user, //to be used after complete integration
+                email: data.email,
+                contact: data.contact,
+                orderId: data.order_id,
+                amount: data.amount,
+                amountRefunded: data.amount_refunded,
+                method: data.method,
+                fee: data.fee,
+                tax: data.tax
+            });
+
+            //push the payment id to user schema
+            user.orders.push(payment);
+            user.save();
+
+            console.log('Payment successful');
+        }
+        //handle unauthorized access
+        else{
+            console.log('Payment Failed, unauthorized access');
+        }
+    } catch (error) {
+        //console error if any
+        console.log('Error in verifying payments: ', error);
+    }
+}

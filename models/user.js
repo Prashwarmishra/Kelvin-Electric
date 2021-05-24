@@ -18,7 +18,13 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-    }
+    },
+    orders: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Payment',
+        }
+    ]
 }, 
     {
         timestamps: true,
