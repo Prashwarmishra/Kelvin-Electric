@@ -6,11 +6,13 @@ const passportJwt = require('./config/passport-jwt-strategy');
 const session = require('express-session');
 const passportGoogle = require('./config/passport-google-oauth2-strategy');
 const env = require('./config/environment');
+const bodyParser = require('body-parser');
 
 const app = express();
 
 //set up middlewares
 app.use(express.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
 //set up database
 const db = require('./config/mongoose');

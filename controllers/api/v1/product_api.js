@@ -199,9 +199,7 @@ module.exports.payment = async function(req, res){
         }
 
         //instantiate the razorpay order
-        const razorpayOrder = await razorpayInstance.orders.create(options);
-
-        console.log(razorpayOrder);    
+        const razorpayOrder = await razorpayInstance.orders.create(options);   
     
         return res.status(200).json({
             message: 'payment order created',
@@ -215,6 +213,5 @@ module.exports.payment = async function(req, res){
             message: 'internal server error',
         });
     }
-    razorpayInstance.orders.create({amount, currency, receipt, payment_capture, notes})
-
 }
+
