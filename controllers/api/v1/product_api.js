@@ -1,6 +1,7 @@
 const Dealership = require('../../../models/dealership');
 const User = require('../../../models/user');
 const Testride = require('../../../models/testride');
+const Preorder = require('../../../models/preorder');
 const testrideConfirmationMailer = require('../../../mailers/testride_confirmation_mailer');
 
 //controller for locating dealerships
@@ -32,7 +33,7 @@ module.exports.testride = async function(req, res){
     try {
         
         //locate the dealership
-        let dealership = await Dealership.findOne({name: req.body.dealershipName});
+        let dealership = await Dealership.findOne({dealershipName: req.body.dealershipName});
 
         //locate the user
         let user = await User.findById(req.user.id);
@@ -42,7 +43,7 @@ module.exports.testride = async function(req, res){
 
             // create a testride record
             let testride = await Testride.create({
-                dealershipName: dealership.name,
+                dealershipName: dealership.dealershipName,
                 date: req.body.date,
                 time: req.body.time,
                 user: user,
@@ -60,6 +61,8 @@ module.exports.testride = async function(req, res){
         }
         //handle unauthorized requests
         else{
+            console.log('dealership -->', dealership);
+            console.log('user --->', user);
             return res.status(401).json({
                 message: 'Unauthorized',
             });
@@ -107,8 +110,6 @@ module.exports.cancelTestride = async function (req, res){
         }
         //handle unauthorized requests
         else{
-            console.log('******testride', testride);
-            console.log('user*****', user);
             return res.status(401).json({
                 message: 'Unauthorized Access',
             });
@@ -117,6 +118,54 @@ module.exports.cancelTestride = async function (req, res){
 
         //console error if any
         console.log('Error in booking testride: ',error);
+        return res.status(500).json({
+            message: 'internal server error',
+        });
+    }
+}
+
+//controller for handling preorders
+module.exports.preorder = async function(req, res){
+    try {
+        //locate the user in database
+        let user = await User.findById(req.user.id);
+               
+        //if user logged found
+        if(user){
+
+            //create preorder 
+            let preorder = await Preorder.create({
+                model: req.body.model,
+                color: req.body.color,
+                shippingState: req.body.shippingState,
+                shippingCity: req.body.shippingCity,
+                shippingPincode: req.body.shippingPincode,
+                shippingDealershipName: req.body.shippingDealershipName,
+                user: user,
+                billingAddress: req.body.billingAddress,
+                billingLandmark: req.body.billingLandmark,
+                billingPincode: req.body.billingPincode,
+                billingCity: req.body.billingCity
+            });
+
+            return res.status(200).json({
+               message: 'order created, complete the payment',
+               data: {
+                   preorder: preorder,
+               } 
+            });
+        }
+
+        //handle user not 
+        else{
+            return res.status(401).json({
+                message: 'Unauthorized Access',
+            });
+        }
+    } catch (error) {
+
+        //console error if any
+        console.log('Error in handling preorders: ', error);
         return res.status(500).json({
             message: 'internal server error',
         });

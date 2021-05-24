@@ -12,6 +12,9 @@ router.get('/locate-dealerships', productApi.locateDealerships);
 router.post('/testride', passport.authenticate('jwt', {session: 'false'}), productApi.testride);
 
 //router for cancelling a testride
-router.get('/testride-cancellation/:id', productApi.cancelTestride);
+router.get('/testride-cancellation/:id', passport.authenticate('jwt', {session: 'false'}), productApi.cancelTestride);
+
+//router for preordering the product
+router.post('/preorder', passport.authenticate('jwt', {session: 'false'}), productApi.preorder);
 
 module.exports = router;

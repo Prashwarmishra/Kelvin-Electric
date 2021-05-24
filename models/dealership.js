@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const dealershipSchema = new mongoose.Schema({
-    name: {
+    dealershipName: {
         type: String,
         required: true,
         unique: true
