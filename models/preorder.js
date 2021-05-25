@@ -48,6 +48,10 @@ const preorderSchema = new mongoose.Schema({
     payment: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Payment',        
+    },
+    cancelled: {
+        type: Boolean,
+        required: true,
     }
 },  {
         timestamps: true,

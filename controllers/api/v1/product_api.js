@@ -239,7 +239,8 @@ module.exports.preorder = async function(req, res){
                 billingLandmark: req.body.billingLandmark,
                 billingPincode: req.body.billingPincode,
                 billingCity: req.body.billingCity,
-                payment: payment
+                payment: payment,
+                cancelled: false,
             });
 
             //create preorder record in user schema
