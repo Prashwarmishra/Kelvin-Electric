@@ -2,10 +2,7 @@ const nodemailer = require('../config/nodemailer');
 
 exports.orderConfirmationEmail = function(preorder){
 
-    console.log('preorder -------->>>', preorder);
-
     const htmlString = nodemailer.renderTemplate({preorder: preorder}, '/order/orderConfirmation.ejs');
-    console.log('htmlstring---------->', htmlString);
 
     nodemailer.transporter.sendMail({
         from: 'product.kelvinelectric@gmail.com',
