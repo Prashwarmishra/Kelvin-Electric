@@ -1,6 +1,7 @@
 
 const development = {
     name: 'development',
+    db_path_deployed: 'mongodb+srv://prashwarmishra:TdUoMBxqBKfalast@cluster0.0aern.mongodb.net/kelvin-electric?retryWrites=true&w=majority',
     db_path: 'kelvin_electric_development',
     smtp: {
         service: 'gmail',

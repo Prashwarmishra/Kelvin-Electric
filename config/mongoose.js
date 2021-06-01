@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const env = require('./environment');
 
 //define database path
-mongoose.connect(`mongodb://localhost/${env.db_path}`, { 
+mongoose.connect(env.db_path_deployed || `mongodb://localhost/${env.db_path}`, { 
     useNewUrlParser: true, 
     useUnifiedTopology: true, 
     useCreateIndex: true 
