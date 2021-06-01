@@ -176,7 +176,7 @@ module.exports.paymentVerification = async function(req, res){
         res.json({status: 'ok'});
         const secret = env.razorpay_webhook_secret;
         
-        const user = await User.findById('60ac9f120c51fbf01c611a01');
+        const user = await User.findById('60b4d24ab80f7f25f8af6a2a');
         console.log('<------replace the id above with req.user.id ----->');
 
         //create a hash of the secret
