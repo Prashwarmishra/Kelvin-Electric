@@ -121,6 +121,7 @@ module.exports.signIn = async function (req, res) {
         message: "Sign-in successful, here is your json web token",
         data: {
           //create a jwt token for 24 hours
+          user: user,
           token: jwt.sign(user.toJSON(), env.jwt_secret, {
             expiresIn: "86400000",
           }),
@@ -213,14 +214,14 @@ module.exports.forgetPassword = async function (req, res) {
 
       return res.status(200).json({
         success: true,
-        message: "Password reset token sent to user Email",
+        message: "Password reset token sent to your Email",
       });
     }
     //handle case when user not found in db
     else {
       return res.status(404).json({
         success: false,
-        message: "No username with the provided email exists in the Database",
+        message: "No username with the provided email exists in the database",
       });
     }
   } catch (error) {
@@ -228,7 +229,7 @@ module.exports.forgetPassword = async function (req, res) {
     console.log("Error in creating password-reset-token: ", error);
     return res.status(500).json({
       success: false,
-      message: "internal server error",
+      message: "Internal Server Error",
     });
   }
 };
@@ -239,7 +240,8 @@ module.exports.resetPassword = async function (req, res) {
     //handle password mismatch
     if (req.body.password != req.body.confirm_password) {
       return res.status(412).json({
-        message: "password and confirm password does not match, try again.",
+        success: false,
+        message: "Password and Confirm password does not match, try again.",
       });
     }
 
@@ -262,12 +264,14 @@ module.exports.resetPassword = async function (req, res) {
       passwordResetToken.save();
 
       return res.status(200).json({
-        message: "profile password changed, login to continue",
+        success: true,
+        message: "Profile password changed, login to continue",
       });
     }
     //handle invalid token
     else {
       return res.status(401).json({
+        success: false,
         message: "Invalid token",
       });
     }
@@ -275,7 +279,8 @@ module.exports.resetPassword = async function (req, res) {
     //in case of error console the error
     console.log("Error in reseting user password: ", error);
     return res.status(500).json({
-      message: "internal server error",
+      success: false,
+      message: "Internal server error",
     });
   }
 };
