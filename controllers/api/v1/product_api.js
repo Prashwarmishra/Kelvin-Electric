@@ -13,11 +13,11 @@ const orderConfirmationMailer = require("../../../mailers/order_confirmation_mai
 module.exports.locateDealerships = async function (req, res) {
   try {
     //filter the dealerships based on city
-    let dealerships = await Dealership.find({ city: req.body.city });
+    let dealerships = await Dealership.find({});
 
     return res.status(200).json({
       success: true,
-      message: "The following Dealerships are Present at your location",
+      message: "List of Dealerships:",
       data: {
         dealerships: dealerships,
       },
@@ -87,11 +87,11 @@ module.exports.cancelTestride = async function (req, res) {
     //fetch the testride details from database
     let testride = await Testride.findById(req.params.id);
 
-    //fetch the user
-    let user = await User.findById(testride.user);
+    // //fetch the user
+    // let user = await User.findById(testride.user);
 
     //if testride details and user found
-    if (testride && user) {
+    if (testride) {
       //check if the testride is valid
       if (testride.isValid) {
         //if valid, cancel the booking
@@ -150,11 +150,12 @@ module.exports.payment = async function (req, res) {
 
     //instantiate the razorpay order
     const razorpayOrder = await razorpayInstance.orders.create(options);
-
+    console.log("razorpay order", razorpayOrder);
     return res.status(200).json({
       success: true,
       message: "Payment Order Created",
       data: razorpayOrder,
+      key: env.razorpay_key,
     });
   } catch (error) {
     //console error if any
@@ -170,11 +171,9 @@ module.exports.payment = async function (req, res) {
 module.exports.paymentVerification = async function (req, res) {
   try {
     //status ok sent so that razorpay does not drop the webhook
+    console.log("verification triggered");
     res.json({ status: "ok" });
     const secret = env.razorpay_webhook_secret;
-
-    const user = await User.findById("60b4d24ab80f7f25f8af6a2a");
-    console.log("<------replace the id above with req.user.id ----->");
 
     //create a hash of the secret
     const shasum = crypto.createHmac("sha256", secret);
@@ -187,7 +186,6 @@ module.exports.paymentVerification = async function (req, res) {
       const data = req.body.payload.payment.entity;
 
       const payment = await Payment.create({
-        user: user, //to be used after complete integration
         email: data.email,
         contact: data.contact,
         orderId: data.order_id,
@@ -215,6 +213,7 @@ module.exports.paymentVerification = async function (req, res) {
 
 module.exports.preorder = async function (req, res) {
   try {
+    console.log("Placing order");
     const user = await User.findById(req.user.id);
 
     const payment = await Payment.findOne({
@@ -222,24 +221,23 @@ module.exports.preorder = async function (req, res) {
       paymentId: req.body.paymentId,
     });
 
+    console.log("Payment details are", payment);
+
     //if user and payment found
     if (user && payment) {
       //create a preorder
       let preorder = await Preorder.create({
         user: user,
-        model: req.body.model,
         color: req.body.color,
-        shippingState: req.body.shippingState,
         shippingCity: req.body.shippingCity,
-        shippingPincode: req.body.shippingPincode,
         shippingDealershipName: req.body.shippingDealershipName,
-        billingAddress: req.body.billingAddress,
-        billingLandmark: req.body.billingLandmark,
-        billingPincode: req.body.billingPincode,
-        billingCity: req.body.billingCity,
+        shippingAddress: req.body.shippingAddress,
+        shippingLandmark: req.body.shippingLandmark,
         payment: payment,
         cancelled: false,
       });
+
+      console.log("preorder record created-----");
 
       //create preorder record in user schema
       user.preorders.push(preorder.id);

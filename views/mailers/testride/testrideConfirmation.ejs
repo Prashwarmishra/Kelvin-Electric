@@ -1,34 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Test ride confirmation</title>
-</head>
-<body>
+  </head>
+  <body>
     <p>Hey <%= testride.user.name %>,</p>
 
-    Your appointment for an exhilarating test drive of our newest Kelvin 150x scooter is confirmed.
-    You'll find the details of your booking below:
+    Your appointment for an exhilarating test drive of our newest Kelvin 250x
+    scooter is confirmed. You'll find the details of your booking below:
 
-    <br><br>
+    <br /><br />
 
     Dealership location: <b><%= testride.dealershipName %></b>
-    <br>
+    <br />
     Date: <b><%= testride.date %></b>
-    <br>
-    Time: <b><%= testride.time %> IST</b>
+    <br />
+    Time: <b><%= testride.time %> PM</b>
 
-    <br><br>
+    <br /><br />
 
     Change of plans? Cancel your booking by clicking the link below:
-    <br>
-    <a href="http://localhost:8000/api/v1/product/testride-cancellation/<%= testride.id %>">Cancel your test ride booking</a>
-    
-    <br><br>
+    <br />
+    <a
+      href="http://localhost:8000/api/v1/product/testride-cancellation/<%= testride.id %>"
+      >Cancel your test ride booking</a
+    >
 
-    Regards,<br>
-    Kelvin Electric  
-</body>
+    <br /><br />
+
+    Regards,<br />
+    Kelvin Electric
+  </body>
 </html>
