@@ -48,7 +48,7 @@ router.post("/reset-password/:id", usersApi.resetPassword);
 
 //route for getting all preorders
 router.get(
-  "/get-preoders/:id",
+  "/get-preorders/:id",
   passport.authenticate("jwt", { session: "false" }),
   usersApi.getAllOrders
 );

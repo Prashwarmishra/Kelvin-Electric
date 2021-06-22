@@ -31,4 +31,11 @@ router.post(
   productApi.preorder
 );
 
+//router for cancelling the product
+router.get(
+  "/cancel-order/:id",
+  passport.authenticate("jwt", { session: "false" }),
+  productApi.cancelOrder
+);
+
 module.exports = router;

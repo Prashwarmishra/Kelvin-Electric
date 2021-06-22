@@ -289,12 +289,15 @@ module.exports.resetPassword = async function (req, res) {
 module.exports.getAllOrders = async function (req, res) {
   try {
     const preorders = await User.findById(req.params.id).populate("preorders");
-    console.log("user preorders are: ", preorders);
+    // console.log("user preorders are: ", preorders);
+
     if (preorders) {
       return res.status(200).json({
         success: true,
         messages: "Users preorder list:",
-        preorders: preorders,
+        data: {
+          preorders: preorders.preorders,
+        },
       });
     } else {
       return res.status(404).json({

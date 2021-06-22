@@ -271,3 +271,37 @@ module.exports.preorder = async function (req, res) {
     });
   }
 };
+
+//controller for cancelling order
+module.exports.cancelOrder = async function (req, res) {
+  try {
+    console.log("params", req.params.id);
+    const order = await Preorder.findById(req.params.id);
+    const user = await User.findById(req.user.id);
+
+    console.log("order", order, "user", user);
+
+    if (order && user) {
+      order.cancelled = true;
+      order.save();
+
+      console.log("order cancelled");
+      return res.status(200).json({
+        success: true,
+        message: "Order cancelled Successfully",
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+  } catch (error) {
+    //console error if any
+    console.log("Error in generating order details: ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
