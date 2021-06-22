@@ -8,6 +8,7 @@ const Razorpay = require("razorpay");
 const env = require("../../../config/environment");
 const crypto = require("crypto");
 const orderConfirmationMailer = require("../../../mailers/order_confirmation_mailer");
+const orderCancellationMailer = require("../../../mailers/order_cancellation_mailer");
 
 //controller for locating dealerships
 module.exports.locateDealerships = async function (req, res) {
@@ -279,13 +280,14 @@ module.exports.cancelOrder = async function (req, res) {
     const order = await Preorder.findById(req.params.id);
     const user = await User.findById(req.user.id);
 
-    console.log("order", order, "user", user);
+    // console.log("order", order, "user", user);
 
     if (order && user) {
       order.cancelled = true;
       order.save();
 
-      console.log("order cancelled");
+      orderCancellationMailer.orderCancellationMail(order, user);
+
       return res.status(200).json({
         success: true,
         message: "Order cancelled Successfully",
