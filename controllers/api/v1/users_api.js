@@ -284,3 +284,30 @@ module.exports.resetPassword = async function (req, res) {
     });
   }
 };
+
+//controller for getting user's preorders
+module.exports.getAllOrders = async function (req, res) {
+  try {
+    const preorders = await User.findById(req.params.id).populate("preorders");
+    console.log("user preorders are: ", preorders);
+    if (preorders) {
+      return res.status(200).json({
+        success: true,
+        messages: "Users preorder list:",
+        preorders: preorders,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "User not Found",
+      });
+    }
+  } catch (error) {
+    //in case of error console the error
+    console.log("Error in fetching preorders: ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};

@@ -46,4 +46,11 @@ router.post("/forgot-password", usersApi.forgetPassword);
 //route for resetting user password
 router.post("/reset-password/:id", usersApi.resetPassword);
 
+//route for getting all preorders
+router.get(
+  "/get-preoders/:id",
+  passport.authenticate("jwt", { session: "false" }),
+  usersApi.getAllOrders
+);
+
 module.exports = router;
