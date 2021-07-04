@@ -41,7 +41,7 @@ router.post(
 );
 
 //route for forgot password
-router.post("/forgot-password", usersApi.forgetPassword);
+router.get("/forgot-password", usersApi.forgetPassword);
 
 //route for resetting user password
 router.post("/reset-password/:id", usersApi.resetPassword);
